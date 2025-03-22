@@ -42,6 +42,12 @@ public class AgendamentoComunicacao {
     @Column(nullable = false, length = 20)
     private StatusComunicacao status = StatusComunicacao.PENDENTE;
 
+    @Column(name = "enviado_em")
+    private LocalDateTime enviadoEm;
+
+    @Column(name = "erro_envio", columnDefinition = "TEXT")
+    private String erroEnvio;
+
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime criadoEm = LocalDateTime.now();
 }

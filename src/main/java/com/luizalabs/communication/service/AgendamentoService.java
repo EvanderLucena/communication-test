@@ -3,10 +3,14 @@ package com.luizalabs.communication.service;
 import com.luizalabs.communication.dto.AgendamentoRequestDTO;
 import com.luizalabs.communication.dto.AgendamentoResponseDTO;
 import com.luizalabs.communication.mapper.AgendamentoMapper;
+import com.luizalabs.communication.model.AgendamentoComunicacao;
+import com.luizalabs.communication.model.StatusComunicacao;
 import com.luizalabs.communication.repository.AgendamentoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -31,4 +35,14 @@ public class AgendamentoService {
         }
         return false;
     }
+
+    //pode ser usado em proximas sprints
+    public void atualizarStatusEnviado(Long id) {
+        AgendamentoComunicacao agendamento = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Agendamento não encontrado"));
+        agendamento.setStatus(StatusComunicacao.ENVIADO);
+        agendamento.setEnviadoEm(LocalDateTime.now());
+        repository.save(agendamento);
+    }
+
 }

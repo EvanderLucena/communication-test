@@ -11,5 +11,7 @@ public record AgendamentoResponseDTO(
         String mensagem,
         TipoComunicacao tipo,
         StatusComunicacao status,
+        LocalDateTime enviadoEm,
+        String erroEnvio,
         LocalDateTime criadoEm
 ) {}

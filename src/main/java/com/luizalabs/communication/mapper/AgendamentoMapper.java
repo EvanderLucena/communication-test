@@ -22,7 +22,9 @@ public class AgendamentoMapper {
                 entity.getMensagem(),
                 entity.getTipo(),
                 entity.getStatus(),
-                entity.getCriadoEm()
+                entity.getCriadoEm(),
+                entity.getErroEnvio(),
+                entity.getEnviadoEm()
         );
     }
 }

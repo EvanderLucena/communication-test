@@ -35,4 +35,12 @@ public class AgendamentoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         return service.deletar(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/status")
+    public ResponseEntity<String> consultarStatus(@PathVariable Long id) {
+        return service.buscarPorId(id)
+                .map(agendamento -> ResponseEntity.ok(agendamento.status().name()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
