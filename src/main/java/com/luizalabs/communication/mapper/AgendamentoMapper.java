@@ -7,22 +7,22 @@ public class AgendamentoMapper {
 
     public static AgendamentoComunicacao toEntity(AgendamentoRequestDTO dto) {
         return AgendamentoComunicacao.builder()
-                .dataHoraEnvio(dto.getDataHoraEnvio())
-                .destinatario(dto.getDestinatario())
-                .mensagem(dto.getMensagem())
-                .tipo(dto.getTipo())
+                .dataHoraEnvio(dto.dataHoraEnvio())
+                .destinatario(dto.destinatario())
+                .mensagem(dto.mensagem())
+                .tipo(dto.tipo())
                 .build();
     }
 
     public static AgendamentoResponseDTO toDTO(AgendamentoComunicacao entity) {
-        return AgendamentoResponseDTO.builder()
-                .id(entity.getId())
-                .dataHoraEnvio(entity.getDataHoraEnvio())
-                .destinatario(entity.getDestinatario())
-                .mensagem(entity.getMensagem())
-                .tipo(entity.getTipo())
-                .status(entity.getStatus())
-                .criadoEm(entity.getCriadoEm())
-                .build();
+        return new AgendamentoResponseDTO(
+                entity.getId(),
+                entity.getDataHoraEnvio(),
+                entity.getDestinatario(),
+                entity.getMensagem(),
+                entity.getTipo(),
+                entity.getStatus(),
+                entity.getCriadoEm()
+        );
     }
 }
