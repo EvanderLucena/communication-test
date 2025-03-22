@@ -1,0 +1,8 @@
+# Ignorar pastas e arquivos desnecessários para o Docker
+target
+.git
+.idea
+*.iml
+*.log
+*.md
+*.zip
