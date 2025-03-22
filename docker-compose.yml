@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    container_name: comunicacao-db
+    environment:
+      POSTGRES_DB: comunicacao_db
+      POSTGRES_USER: comunicacao
+      POSTGRES_PASSWORD: comunicacao123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: comunicacao-api
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/comunicacao_db
+      SPRING_DATASOURCE_USERNAME: comunicacao
+      SPRING_DATASOURCE_PASSWORD: comunicacao123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+volumes:
+  pgdata:
