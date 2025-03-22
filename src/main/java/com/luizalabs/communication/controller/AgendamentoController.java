@@ -2,6 +2,7 @@ package com.luizalabs.communication.controller;
 
 import com.luizalabs.communication.dto.AgendamentoRequestDTO;
 import com.luizalabs.communication.dto.AgendamentoResponseDTO;
+import com.luizalabs.communication.model.StatusComunicacao;
 import com.luizalabs.communication.service.AgendamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/agendamentos")
@@ -41,6 +43,11 @@ public class AgendamentoController {
         return service.buscarPorId(id)
                 .map(agendamento -> ResponseEntity.ok(agendamento.status().name()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AgendamentoResponseDTO>> listar(@RequestParam(required = false) StatusComunicacao status) {
+        return ResponseEntity.ok(service.listar(status));
     }
 
 }

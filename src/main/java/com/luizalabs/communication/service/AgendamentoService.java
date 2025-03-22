@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,15 @@ public class AgendamentoService {
         agendamento.setStatus(StatusComunicacao.ENVIADO);
         agendamento.setEnviadoEm(LocalDateTime.now());
         repository.save(agendamento);
+    }
+
+    public List<AgendamentoResponseDTO> listar(StatusComunicacao status) {
+        List<AgendamentoComunicacao> agendamentos =
+                (status == null) ? repository.findAll() : repository.findByStatus(status);
+
+        return agendamentos.stream()
+                .map(AgendamentoMapper::toDTO)
+                .toList();
     }
 
 }
