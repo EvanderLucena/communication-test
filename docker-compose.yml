@@ -8,10 +8,10 @@ services:
       POSTGRES_DB: comunicacao_db
       POSTGRES_USER: comunicacao
       POSTGRES_PASSWORD: comunicacao123
-    ports:
-      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
 
   app:
     build: .
