@@ -1,4 +1,4 @@
-package com.luizalabs.communication_test;
+package com.luizalabs.communication;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
