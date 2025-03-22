@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/agendamentos")
 @RequiredArgsConstructor
@@ -17,7 +19,9 @@ public class AgendamentoController {
 
     @PostMapping
     public ResponseEntity<AgendamentoResponseDTO> criar(@RequestBody @Valid AgendamentoRequestDTO dto) {
-        return ResponseEntity.ok(service.criarAgendamento(dto));
+        AgendamentoResponseDTO response = service.criarAgendamento(dto);
+        URI location = URI.create("/agendamentos/" + response.id());
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping("/{id}")
