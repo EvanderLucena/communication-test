@@ -2,6 +2,7 @@ package com.luizalabs.communication.controller;
 
 import com.luizalabs.communication.dto.AgendamentoRequestDTO;
 import com.luizalabs.communication.dto.AgendamentoResponseDTO;
+import com.luizalabs.communication.dto.ApiResponse;
 import com.luizalabs.communication.model.StatusComunicacao;
 import com.luizalabs.communication.service.AgendamentoService;
 import jakarta.validation.Valid;
@@ -20,17 +21,18 @@ public class AgendamentoController {
     private final AgendamentoService service;
 
     @PostMapping
-    public ResponseEntity<AgendamentoResponseDTO> criar(@RequestBody @Valid AgendamentoRequestDTO dto) {
+    public ResponseEntity<ApiResponse<AgendamentoResponseDTO>> criar(@RequestBody @Valid AgendamentoRequestDTO dto) {
         AgendamentoResponseDTO response = service.criarAgendamento(dto);
         URI location = URI.create("/agendamentos/" + response.id());
-        return ResponseEntity.created(location).body(response);
+        return ResponseEntity.created(location)
+                .body(ApiResponse.success(response, "Agendamento criado com sucesso"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AgendamentoResponseDTO> buscar(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<AgendamentoResponseDTO>> buscar(@PathVariable Long id) {
         return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .map(dto -> ResponseEntity.ok(ApiResponse.success(dto, "Agendamento encontrado")))
+                .orElse(ResponseEntity.status(404).body(ApiResponse.error(404, "Agendamento não encontrado")));
     }
 
     @DeleteMapping("/{id}")
@@ -39,15 +41,15 @@ public class AgendamentoController {
     }
 
     @GetMapping("/{id}/status")
-    public ResponseEntity<String> consultarStatus(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> consultarStatus(@PathVariable Long id) {
         return service.buscarPorId(id)
-                .map(agendamento -> ResponseEntity.ok(agendamento.status().name()))
-                .orElse(ResponseEntity.notFound().build());
+                .map(agendamento -> ResponseEntity.ok(ApiResponse.success(agendamento.status().name(), "Status do agendamento")))
+                .orElse(ResponseEntity.status(404).body(ApiResponse.error(404, "Agendamento não encontrado")));
     }
 
     @GetMapping
-    public ResponseEntity<List<AgendamentoResponseDTO>> listar(@RequestParam(required = false) StatusComunicacao status) {
-        return ResponseEntity.ok(service.listar(status));
+    public ResponseEntity<ApiResponse<List<AgendamentoResponseDTO>>> listar(@RequestParam(required = false) StatusComunicacao status) {
+        List<AgendamentoResponseDTO> lista = service.listar(status);
+        return ResponseEntity.ok(ApiResponse.success(lista, "Lista de agendamentos"));
     }
-
 }
