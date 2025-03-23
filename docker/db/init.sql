@@ -1,27 +1,49 @@
-CREATE TABLE IF NOT EXISTS agendamentos_comunicacao (
-                                                        id SERIAL PRIMARY KEY,
-                                                        data_hora_envio TIMESTAMP NOT NULL,
-                                                        destinatario VARCHAR(255) NOT NULL,
-    mensagem TEXT NOT NULL,
-    tipo VARCHAR(20) NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
+-- Criação da tabela principal de agendamentos
+CREATE TABLE IF NOT EXISTS agendamentos (
+                                            id SERIAL PRIMARY KEY,
+                                            data_hora_envio TIMESTAMP NOT NULL,
+                                            status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
     enviado_em TIMESTAMP,
     erro_envio TEXT,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
--- Massa de dados para diferentes cenários
-INSERT INTO agendamentos_comunicacao (data_hora_envio, destinatario, mensagem, tipo, status, enviado_em, erro_envio)
+-- Criação da tabela de mensagens (1:1 com agendamento)
+CREATE TABLE IF NOT EXISTS mensagens (
+                                         id SERIAL PRIMARY KEY,
+                                         conteudo TEXT NOT NULL,
+                                         agendamento_id BIGINT NOT NULL,
+                                         CONSTRAINT fk_mensagem_agendamento FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id)
+    );
+
+-- Criação da tabela de destinatários (1:N com agendamento)
+CREATE TABLE IF NOT EXISTS destinatarios (
+                                             id SERIAL PRIMARY KEY,
+                                             contato VARCHAR(255) NOT NULL,
+    tipo VARCHAR(20) NOT NULL,
+    agendamento_id BIGINT NOT NULL,
+    CONSTRAINT fk_destinatario_agendamento FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id)
+    );
+
+-- Inserindo agendamentos
+INSERT INTO agendamentos (data_hora_envio, status, enviado_em, erro_envio)
 VALUES
-    -- Agendamentos pendentes
-    ('2025-03-23 10:00:00', 'teste1@magalu.com', 'Mensagem de teste 1', 'EMAIL', 'PENDENTE', null, null),
-    ('2025-03-23 11:00:00', 'teste2@magalu.com', 'Mensagem de teste 2', 'SMS', 'PENDENTE', null, null),
+    ('2025-03-24 10:00:00', 'PENDENTE', NULL, NULL),
+    ('2025-03-24 11:00:00', 'ENVIADO', '2025-03-24 11:01:00', NULL),
+    ('2025-03-24 12:00:00', 'FALHA', NULL, 'Erro de conexão');
 
-    -- Agendamento enviado com sucesso
-    ('2025-03-22 08:00:00', 'cliente@magalu.com', 'Mensagem enviada com sucesso', 'PUSH', 'ENVIADO', '2025-03-22 08:01:00', null),
+-- Inserindo mensagens
+INSERT INTO mensagens (conteudo, agendamento_id)
+VALUES
+    ('Mensagem para primeiro agendamento', 1),
+    ('Mensagem enviada com sucesso', 2),
+    ('Tentativa falhou', 3);
 
-    -- Agendamento com falha
-    ('2025-03-21 14:00:00', 'telefone_invalido', 'Erro ao enviar SMS', 'SMS', 'FALHA', null, 'Número de telefone inválido'),
-
-    -- Outro enviado
-    ('2025-03-20 09:00:00', 'user@magalu.com', 'Outro envio realizado', 'WHATSAPP', 'ENVIADO', '2025-03-20 09:00:10', null);
+-- Inserindo destinatários
+INSERT INTO destinatarios (contato, tipo, agendamento_id)
+VALUES
+    ('cliente1@magalu.com', 'EMAIL', 1),
+    ('11999998888', 'SMS', 1),
+    ('cliente2@magalu.com', 'EMAIL', 2),
+    ('cliente3@magalu.com', 'EMAIL', 3),
+    ('551199991122', 'WHATSAPP', 3);

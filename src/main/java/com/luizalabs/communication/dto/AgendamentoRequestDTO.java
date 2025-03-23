@@ -1,30 +1,35 @@
 package com.luizalabs.communication.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.luizalabs.communication.model.TipoComunicacao;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Schema(description = "Requisição para agendamento de envio de comunicação")
+@Schema(description = "Dados para criar um novo agendamento de comunicação.")
 public record AgendamentoRequestDTO(
 
-        @NotNull
-        @Future
+        @Schema(
+                description = "Data e hora do agendamento da comunicação",
+                example = "2025-03-24T10:30:00",
+                type = "string",
+                format = "date-time"
+        )
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-        @Schema(description = "Data e hora para o envio da comunicação", example = "2025-03-23T10:00:00")
+        @NotNull(message = "A data e hora do envio é obrigatória")
+        @Future(message = "A data e hora deve estar no futuro")
         LocalDateTime dataHoraEnvio,
 
-        @NotBlank
-        @Schema(description = "Destinatário da comunicação. Pode ser e-mail, telefone ou token", example = "teste@magalu.com")
-        String destinatario,
+        @NotNull(message = "A mensagem é obrigatória")
+        @Valid
+        @Schema(description = "Conteúdo da mensagem a ser enviada")
+        MensagemDTO mensagem,
 
-        @NotBlank
-        @Schema(description = "Mensagem que será entregue ao destinatário", example = "Olá, sua entrega está a caminho!")
-        String mensagem,
+        @NotEmpty(message = "Deve haver ao menos um destinatário")
+        @Valid
+        @Schema(description = "Lista de destinatários da comunicação")
+        List<DestinatarioDTO> destinatarios
 
-        @NotNull
-        @Schema(description = "Canal de comunicação a ser utilizado", example = "EMAIL", allowableValues = {"EMAIL", "SMS", "WHATSAPP", "PUSH"})
-        TipoComunicacao tipo
 ) {}

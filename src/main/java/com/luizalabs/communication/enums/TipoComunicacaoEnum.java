@@ -1,9 +1,9 @@
-package com.luizalabs.communication.model;
+package com.luizalabs.communication.enums;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Tipos de comunicação disponíveis")
-public enum TipoComunicacao {
+public enum TipoComunicacaoEnum {
     EMAIL,
     SMS,
     WHATSAPP,

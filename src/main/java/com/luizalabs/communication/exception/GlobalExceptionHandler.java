@@ -1,6 +1,6 @@
 package com.luizalabs.communication.exception;
 
-import com.luizalabs.communication.dto.ApiResponse;
+import com.luizalabs.communication.dto.ApiResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(
+    public ResponseEntity<ApiResponseDTO<Map<String, String>>> handleValidationException(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
             errors.put(field.getField(), field.getDefaultMessage());
         }
 
-        ApiResponse<Map<String, String>> response = new ApiResponse<>(
+        ApiResponseDTO<Map<String, String>> response = new ApiResponseDTO<>(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Erro de validação",
@@ -40,15 +40,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNotFound(NoSuchElementException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponseDTO<Void>> handleNotFound(NoSuchElementException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(404, ex.getMessage()));
+                .body(ApiResponseDTO.error(404, ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponseDTO<Void>> handleGeneric(Exception ex, HttpServletRequest request) {
         logger.error("Erro interno no endpoint {}: {}", request.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(500, "Erro interno inesperado"));
+                .body(ApiResponseDTO.error(500, "Erro interno inesperado"));
     }
 }
