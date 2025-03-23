@@ -84,38 +84,13 @@ Isso derruba tudo e remove os dados salvos no banco.
   │       ├── enums/
   │       ├── dto/
   │       └── mapper/
+  │       └── validators/
   ├── docker/
   │   └── db/
   │       └── init.sql
   ├── docker-compose.yml
   ├── Dockerfile
   └── README.md
-  ```
-
-  ---
-
-## Testes com dados prontos
-
-Após subir o projeto com Docker, o banco já terá registros de agendamentos prontos.
-
-### Exemplo de retorno em `GET /agendamentos/1`
-
-  ```json
-  {
-    "id": 1,
-    "dataHoraEnvio": "2025-03-23T10:00:00",
-    "mensagem": {
-      "conteudo": "Mensagem de teste 1"
-    },
-    "destinatarios": [
-      {
-        "contato": "teste1@magalu.com",
-        "tipo": "EMAIL"
-      }
-    ],
-    "status": "PENDENTE",
-    "criadoEm": "2025-03-22T18:30:00"
-  }
   ```
 
   ---
@@ -136,12 +111,14 @@ Você pode acessar via DBeaver, PgAdmin ou qualquer cliente PostgreSQL.
 - A estrutura foi pensada para o futuro processo de envio:
   - O sistema de envio pode buscar agendamentos com `status = 'PENDENTE'` e `dataHoraEnvio <= NOW()`
   - O status poderá ser atualizado para `ENVIADO` ou `FALHA`, com campos de auditoria (`enviadoEm`, `erroEnvio`)
-- A validação dos campos é feita com `Bean Validation`
+- A modelagem agora conta com a entidade `Envio`, separando a responsabilidade do status de envio do agendamento
+- Validação de campos é feita com `Bean Validation`, incluindo validações específicas baseadas no tipo de comunicação
+- E-mails são validados apenas quando o tipo de comunicação é `EMAIL`
 - Os DTOs isolam a camada de domínio do modelo REST
-- Lombok é usado para reduzir boilerplate de getters/setters
-- Uso de records para imutabilidade de DTOs
-- Padronização de respostas com `ApiResponse<T>`
-- Tratamento global de erros com `GlobalExceptionHandler`
+- Lombok é utilizado para reduzir boilerplate (getters, setters, builders)
+- DTOs são definidos como `records` para promover imutabilidade
+- Padronização de respostas com `ApiResponse<T>` para consistência na API
+- Tratamento global de exceções com `GlobalExceptionHandler`, retornando erros estruturados com mensagens compreensíveis
 
   ---
 
@@ -187,8 +164,6 @@ Após o comando `mvn verify`, abra o seguinte arquivo no navegador:
   ---
 
 ## Contato
-
-Feito para o desafio técnico do Magalu.
 
 Caso precise entrar em contato:
 
