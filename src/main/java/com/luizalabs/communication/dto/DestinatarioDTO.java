@@ -1,10 +1,12 @@
 package com.luizalabs.communication.dto;
 
+import com.luizalabs.communication.configs.ContatoValido;
 import com.luizalabs.communication.enums.TipoComunicacaoEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 @Schema(description = "Representa um destinatário da comunicação.")
+@ContatoValido
 public record DestinatarioDTO(
 
         @NotBlank(message = "O contato do destinatário não pode estar em branco")
