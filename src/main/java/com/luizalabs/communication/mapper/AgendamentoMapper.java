@@ -2,11 +2,13 @@ package com.luizalabs.communication.mapper;
 
 import com.luizalabs.communication.dto.*;
 import com.luizalabs.communication.enums.StatusComunicacaoEnum;
-import com.luizalabs.communication.model.*;
+import com.luizalabs.communication.model.Agendamento;
+import com.luizalabs.communication.model.Destinatario;
+import com.luizalabs.communication.model.Envio;
+import com.luizalabs.communication.model.Mensagem;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class AgendamentoMapper {
@@ -14,7 +16,6 @@ public class AgendamentoMapper {
     public Agendamento toEntity(AgendamentoRequestDTO dto) {
         Agendamento agendamento = Agendamento.builder()
                 .dataHoraEnvio(dto.dataHoraEnvio())
-                .status(StatusComunicacaoEnum.PENDENTE)
                 .build();
 
         // Set mensagem
@@ -31,8 +32,15 @@ public class AgendamentoMapper {
                         .tipo(d.tipo())
                         .agendamento(agendamento)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         agendamento.setDestinatarios(destinatarios);
+
+        // Set envio
+        Envio envio = Envio.builder()
+                .status(StatusComunicacaoEnum.PENDENTE)
+                .agendamento(agendamento)
+                .build();
+        agendamento.setEnvio(envio);
 
         return agendamento;
     }
@@ -42,17 +50,22 @@ public class AgendamentoMapper {
 
         List<DestinatarioDTO> destinatariosDTO = entity.getDestinatarios().stream()
                 .map(d -> new DestinatarioDTO(d.getContato(), d.getTipo()))
-                .collect(Collectors.toList());
+                .toList();
+
+        Envio envio = entity.getEnvio();
+        EnvioDTO envioDTO = new EnvioDTO(
+                envio.getStatus(),
+                envio.getEnviadoEm(),
+                envio.getErroEnvio()
+        );
 
         return new AgendamentoResponseDTO(
                 entity.getId(),
                 entity.getDataHoraEnvio(),
-                entity.getStatus(),
-                entity.getEnviadoEm(),
-                entity.getErroEnvio(),
                 entity.getCriadoEm(),
                 mensagemDTO,
-                destinatariosDTO
+                destinatariosDTO,
+                envioDTO
         );
     }
 }

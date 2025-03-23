@@ -1,4 +1,4 @@
-package com.luizalabs.communication.configs;
+package com.luizalabs.communication.validators;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

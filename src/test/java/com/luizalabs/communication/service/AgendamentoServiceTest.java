@@ -1,15 +1,13 @@
 package com.luizalabs.communication.service;
 
-import com.luizalabs.communication.dto.AgendamentoRequestDTO;
-import com.luizalabs.communication.dto.AgendamentoResponseDTO;
-import com.luizalabs.communication.dto.DestinatarioDTO;
-import com.luizalabs.communication.dto.MensagemDTO;
+import com.luizalabs.communication.dto.*;
+import com.luizalabs.communication.enums.StatusComunicacaoEnum;
 import com.luizalabs.communication.enums.TipoComunicacaoEnum;
 import com.luizalabs.communication.mapper.AgendamentoMapper;
 import com.luizalabs.communication.model.Agendamento;
 import com.luizalabs.communication.model.Destinatario;
+import com.luizalabs.communication.model.Envio;
 import com.luizalabs.communication.model.Mensagem;
-import com.luizalabs.communication.enums.StatusComunicacaoEnum;
 import com.luizalabs.communication.repository.AgendamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +44,6 @@ class AgendamentoServiceTest {
         agendamento = Agendamento.builder()
                 .id(1L)
                 .dataHoraEnvio(LocalDateTime.now().plusDays(1))
-                .status(StatusComunicacaoEnum.PENDENTE)
                 .criadoEm(LocalDateTime.now())
                 .mensagem(Mensagem.builder().conteudo("Teste").build())
                 .destinatarios(Collections.emptyList())
@@ -55,12 +52,10 @@ class AgendamentoServiceTest {
         responseDTO = new AgendamentoResponseDTO(
                 agendamento.getId(),
                 agendamento.getDataHoraEnvio(),
-                agendamento.getStatus(),
-                null,
-                null,
                 agendamento.getCriadoEm(),
                 new MensagemDTO("Teste"),
-                Collections.emptyList()
+                Collections.emptyList(),
+                new EnvioDTO(StatusComunicacaoEnum.PENDENTE, null, null)
         );
     }
 
@@ -72,7 +67,7 @@ class AgendamentoServiceTest {
         var result = service.buscarPorId(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(StatusComunicacaoEnum.PENDENTE, result.get().status());
+        assertEquals(StatusComunicacaoEnum.PENDENTE, result.get().envio().status());
         verify(repository).findById(1L);
     }
 
@@ -108,14 +103,14 @@ class AgendamentoServiceTest {
 
     @Test
     void deveFiltrarPorStatus() {
-        when(repository.findByStatus(StatusComunicacaoEnum.PENDENTE))
+        when(repository.findByEnvio_Status(StatusComunicacaoEnum.PENDENTE))
                 .thenReturn(Collections.singletonList(agendamento));
         when(mapper.toDTO(agendamento)).thenReturn(responseDTO);
 
         var lista = service.listar(StatusComunicacaoEnum.PENDENTE);
 
         assertEquals(1, lista.size());
-        assertEquals(StatusComunicacaoEnum.PENDENTE, lista.get(0).status());
+        assertEquals(StatusComunicacaoEnum.PENDENTE, lista.get(0).envio().status());
     }
 
     @Test
@@ -131,42 +126,46 @@ class AgendamentoServiceTest {
 
     @Test
     void deveCriarAgendamentoComSucesso() {
+        LocalDateTime dataHoraEnvio = LocalDateTime.now().plusHours(1);
+        LocalDateTime criadoEm = LocalDateTime.now();
+
         AgendamentoRequestDTO dto = new AgendamentoRequestDTO(
-                LocalDateTime.now().plusHours(1),
+                dataHoraEnvio,
                 new MensagemDTO("Mensagem de teste"),
                 List.of(new DestinatarioDTO("teste@magalu.com", TipoComunicacaoEnum.EMAIL))
         );
 
-        Agendamento entity = Agendamento.builder()
+        Agendamento salvo = Agendamento.builder()
                 .id(1L)
-                .dataHoraEnvio(dto.dataHoraEnvio())
-                .status(StatusComunicacaoEnum.PENDENTE)
-                .mensagem(Mensagem.builder().conteudo(dto.mensagem().conteudo()).build())
+                .dataHoraEnvio(dataHoraEnvio)
+                .criadoEm(criadoEm)
+                .mensagem(Mensagem.builder().conteudo("Mensagem de teste").build())
                 .destinatarios(List.of(Destinatario.builder()
                         .contato("teste@magalu.com")
                         .tipo(TipoComunicacaoEnum.EMAIL)
                         .build()))
-                .criadoEm(LocalDateTime.now())
+                .envio(Envio.builder()
+                        .status(StatusComunicacaoEnum.PENDENTE)
+                        .build())
                 .build();
 
-        when(mapper.toEntity(dto)).thenReturn(entity);
-        when(repository.save(entity)).thenReturn(entity);
-        when(mapper.toDTO(entity)).thenReturn(new AgendamentoResponseDTO(
-                entity.getId(),
-                entity.getDataHoraEnvio(),
-                entity.getStatus(),
-                null,
-                null,
-                entity.getCriadoEm(),
+        when(repository.save(any(Agendamento.class))).thenReturn(salvo);
+        when(mapper.toDTO(salvo)).thenReturn(new AgendamentoResponseDTO(
+                salvo.getId(),
+                salvo.getDataHoraEnvio(),
+                salvo.getCriadoEm(),
                 new MensagemDTO("Mensagem de teste"),
-                List.of(new DestinatarioDTO("teste@magalu.com", TipoComunicacaoEnum.EMAIL))
+                List.of(new DestinatarioDTO("teste@magalu.com", TipoComunicacaoEnum.EMAIL)),
+                new EnvioDTO(StatusComunicacaoEnum.PENDENTE, null, null)
         ));
 
-        var response = service.criarAgendamento(dto);
+        AgendamentoResponseDTO response = service.criarAgendamento(dto);
 
-        assertNotNull(response);
+        assertNotNull(response, "A resposta não deveria ser nula");
         assertEquals(1L, response.id());
-        assertEquals(StatusComunicacaoEnum.PENDENTE, response.status());
-        verify(repository).save(entity);
+        assertEquals(StatusComunicacaoEnum.PENDENTE, response.envio().status());
+
+        // Verifica que o método save foi chamado exatamente uma vez
+        verify(repository).save(any(Agendamento.class));
     }
 }

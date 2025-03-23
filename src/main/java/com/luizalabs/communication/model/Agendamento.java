@@ -1,6 +1,5 @@
 package com.luizalabs.communication.model;
 
-import com.luizalabs.communication.enums.StatusComunicacaoEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,22 +22,20 @@ public class Agendamento {
     @Column(name = "data_hora_envio", nullable = false)
     private LocalDateTime dataHoraEnvio;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private StatusComunicacaoEnum status = StatusComunicacaoEnum.PENDENTE;
-
-    @Column(name = "enviado_em")
-    private LocalDateTime enviadoEm;
-
-    @Column(name = "erro_envio", columnDefinition = "TEXT")
-    private String erroEnvio;
-
     @Column(name = "criado_em", nullable = false)
-    private LocalDateTime criadoEm = LocalDateTime.now();
+    private LocalDateTime criadoEm;
 
     @OneToOne(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true)
     private Mensagem mensagem;
 
     @OneToMany(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Destinatario> destinatarios;
+
+    @OneToOne(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Envio envio;
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+    }
 }

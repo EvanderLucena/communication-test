@@ -14,8 +14,7 @@ public record AgendamentoRequestDTO(
         @Schema(
                 description = "Data e hora do agendamento da comunicação",
                 example = "2025-03-24T10:30:00",
-                type = "string",
-                format = "date-time"
+                type = "string"
         )
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         @NotNull(message = "A data e hora do envio é obrigatória")

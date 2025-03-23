@@ -1,10 +1,7 @@
 package com.luizalabs.communication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luizalabs.communication.dto.AgendamentoRequestDTO;
-import com.luizalabs.communication.dto.AgendamentoResponseDTO;
-import com.luizalabs.communication.dto.DestinatarioDTO;
-import com.luizalabs.communication.dto.MensagemDTO;
+import com.luizalabs.communication.dto.*;
 import com.luizalabs.communication.enums.StatusComunicacaoEnum;
 import com.luizalabs.communication.enums.TipoComunicacaoEnum;
 import com.luizalabs.communication.service.AgendamentoService;
@@ -42,15 +39,14 @@ class AgendamentoControllerTest {
 
     @BeforeEach
     void setUp() {
+        EnvioDTO envio = new EnvioDTO(StatusComunicacaoEnum.PENDENTE, null, null);
         agendamentoResponseDTO = new AgendamentoResponseDTO(
                 1L,
                 LocalDateTime.now().plusDays(1),
-                StatusComunicacaoEnum.PENDENTE,
-                null,
-                null,
                 LocalDateTime.now(),
                 new MensagemDTO("Teste"),
-                List.of(new DestinatarioDTO("email@magalu.com", TipoComunicacaoEnum.EMAIL))
+                List.of(new DestinatarioDTO("email@magalu.com", TipoComunicacaoEnum.EMAIL)),
+                envio
         );
     }
 
@@ -91,18 +87,8 @@ class AgendamentoControllerTest {
     @Test
     void deveConsultarStatusAgendamento() throws Exception {
         Long id = 1L;
-        var responseDTO = new AgendamentoResponseDTO(
-                id,
-                LocalDateTime.now().plusHours(1),
-                StatusComunicacaoEnum.PENDENTE,
-                null,
-                null,
-                LocalDateTime.now(),
-                new MensagemDTO("Mensagem de teste"),
-                List.of(new DestinatarioDTO("teste@magalu.com", TipoComunicacaoEnum.EMAIL))
-        );
 
-        when(service.buscarPorId(id)).thenReturn(Optional.of(responseDTO));
+        when(service.buscarPorId(id)).thenReturn(Optional.of(agendamentoResponseDTO));
 
         mockMvc.perform(get("/agendamentos/{id}/status", id))
                 .andExpect(status().isOk())

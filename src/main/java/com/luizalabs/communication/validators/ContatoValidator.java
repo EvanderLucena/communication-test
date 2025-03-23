@@ -1,4 +1,4 @@
-package com.luizalabs.communication.configs;
+package com.luizalabs.communication.validators;
 
 import com.luizalabs.communication.dto.DestinatarioDTO;
 import jakarta.validation.ConstraintValidator;

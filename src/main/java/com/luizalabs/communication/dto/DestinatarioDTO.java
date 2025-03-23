@@ -1,6 +1,6 @@
 package com.luizalabs.communication.dto;
 
-import com.luizalabs.communication.configs.ContatoValido;
+import com.luizalabs.communication.validators.ContatoValido;
 import com.luizalabs.communication.enums.TipoComunicacaoEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
