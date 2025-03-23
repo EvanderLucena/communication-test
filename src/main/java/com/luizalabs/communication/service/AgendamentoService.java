@@ -3,6 +3,7 @@ package com.luizalabs.communication.service;
 import com.luizalabs.communication.dto.AgendamentoRequestDTO;
 import com.luizalabs.communication.dto.AgendamentoResponseDTO;
 import com.luizalabs.communication.enums.StatusComunicacaoEnum;
+import com.luizalabs.communication.exception.BusinessException;
 import com.luizalabs.communication.mapper.AgendamentoMapper;
 import com.luizalabs.communication.model.Agendamento;
 import com.luizalabs.communication.repository.AgendamentoRepository;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +34,15 @@ public class AgendamentoService {
     public boolean deletar(Long id) {
         return repository.findById(id)
                 .map(agendamento -> {
+                    if (agendamento.getStatus() == StatusComunicacaoEnum.ENVIADO) {
+                        throw new BusinessException("Não é permitido excluir agendamentos que já foram enviados.");
+                    }
                     repository.delete(agendamento);
                     return true;
                 })
                 .orElse(false);
     }
+
 
     public List<AgendamentoResponseDTO> listar(StatusComunicacaoEnum status) {
         List<Agendamento> agendamentos = (status != null)
@@ -47,6 +51,6 @@ public class AgendamentoService {
 
         return agendamentos.stream()
                 .map(mapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

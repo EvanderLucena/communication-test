@@ -51,4 +51,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponseDTO.error(500, "Erro interno inesperado"));
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleBusinessException(BusinessException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponseDTO.error(400, ex.getMessage()));
+    }
+
 }

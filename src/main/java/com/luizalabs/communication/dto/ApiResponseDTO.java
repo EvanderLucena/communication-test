@@ -8,9 +8,6 @@ public record ApiResponseDTO<T>(
         String message,
         T data
 ) {
-    public static <T> ApiResponseDTO<T> success(T data, String message) {
-        return new ApiResponseDTO<>(LocalDateTime.now(), 200, message, data);
-    }
 
     public static <T> ApiResponseDTO<T> success(T data) {
         return new ApiResponseDTO<>(LocalDateTime.now(), 200, "Sucesso", data);
