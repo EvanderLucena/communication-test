@@ -145,6 +145,47 @@ Você pode acessar via DBeaver, PgAdmin ou qualquer cliente PostgreSQL.
 
   ---
 
+## Testes e Cobertura
+
+Este projeto possui testes unitários para os principais serviços e controllers, garantindo estabilidade e confiabilidade.
+
+### Frameworks utilizados:
+- **JUnit 5**
+- **Mockito** (para simulação de dependências)
+- **Spring Boot Test**
+- **MockMvc** (para testes da camada de controller)
+- **Jacoco** (para análise de cobertura)
+
+### Como executar os testes:
+
+      mvn clean verify
+
+Esse comando irá:
+
+- Executar todos os testes unitários
+- Gerar o relatório de cobertura de testes via Jacoco
+- Validar se a cobertura mínima foi atingida
+
+### Regras de cobertura configuradas:
+
+A cobertura mínima definida via Jacoco é:
+
+- **90% de linhas cobertas** para os pacotes:
+  - `com.luizalabs.communication.service`
+  - `com.luizalabs.communication.controller`
+
+Caso a cobertura mínima não seja atingida, o build falhará.
+
+### Acessando o relatório de cobertura:
+
+Após o comando `mvn verify`, abra o seguinte arquivo no navegador:
+
+      target/site/jacoco/index.html
+
+> O relatório mostra o percentual de cobertura por classe, método e linha de código.
+
+  ---
+
 ## Contato
 
 Feito para o desafio técnico do Magalu.
