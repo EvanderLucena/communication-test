@@ -14,29 +14,29 @@ import java.util.List;
 public class AgendamentoMapper {
 
     public Agendamento toEntity(AgendamentoRequestDTO dto) {
-        Agendamento agendamento = Agendamento.builder()
-                .dataHoraEnvio(dto.dataHoraEnvio())
-                .build();
 
-        Mensagem mensagem = Mensagem.builder()
-                .conteudo(dto.mensagem().conteudo())
-                .agendamento(agendamento)
-                .build();
+        Agendamento agendamento = new Agendamento();
+        agendamento.setDataHoraEnvio(dto.dataHoraEnvio());
+
+        Mensagem mensagem = new Mensagem();
+        mensagem.setConteudo(dto.mensagem().conteudo());
+        mensagem.setAgendamento(agendamento);
         agendamento.setMensagem(mensagem);
 
         List<Destinatario> destinatarios = dto.destinatarios().stream()
-                .map(d -> Destinatario.builder()
-                        .contato(d.contato())
-                        .tipo(d.tipo())
-                        .agendamento(agendamento)
-                        .build())
-                .toList();
+                .map(destinatarioDTO -> {
+                    Destinatario d = new Destinatario();
+                    d.setContato(destinatarioDTO.contato());
+                    d.setTipo(destinatarioDTO.tipo());
+                    d.setAgendamento(agendamento);
+                    return d;
+                }).toList();
+
         agendamento.setDestinatarios(destinatarios);
 
-        Envio envio = Envio.builder()
-                .status(StatusComunicacaoEnum.PENDENTE)
-                .agendamento(agendamento)
-                .build();
+        Envio envio = new Envio();
+        envio.setStatus(StatusComunicacaoEnum.PENDENTE);
+        envio.setAgendamento(agendamento);
         agendamento.setEnvio(envio);
 
         return agendamento;

@@ -149,7 +149,8 @@ class AgendamentoServiceTest {
                         .build())
                 .build();
 
-        when(repository.save(any(Agendamento.class))).thenReturn(salvo);
+        when(mapper.toEntity(dto)).thenReturn(salvo);
+        when(repository.save(salvo)).thenReturn(salvo);
         when(mapper.toDTO(salvo)).thenReturn(new AgendamentoResponseDTO(
                 salvo.getId(),
                 salvo.getDataHoraEnvio(),
@@ -165,6 +166,8 @@ class AgendamentoServiceTest {
         assertEquals(1L, response.id());
         assertEquals(StatusComunicacaoEnum.PENDENTE, response.envio().status());
 
-        verify(repository).save(any(Agendamento.class));
+        verify(mapper).toEntity(dto);
+        verify(repository).save(salvo);
+        verify(mapper).toDTO(salvo);
     }
 }
