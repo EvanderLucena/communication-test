@@ -82,4 +82,15 @@ public class AgendamentoService {
                 .map(mapper::toDTO)
                 .toList();
     }
+
+    public Optional<String> buscarStatusPorId(Long id) {
+        return repository.findById(id)
+                .map(agendamento -> {
+                    if (agendamento.getEnvio() == null || agendamento.getEnvio().getStatus() == null) {
+                        return "DESCONHECIDO";
+                    }
+                    return agendamento.getEnvio().getStatus().name();
+                });
+    }
+
 }

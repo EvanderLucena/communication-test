@@ -44,13 +44,8 @@ public class AgendamentoController {
 
     @GetMapping("/{id}/status")
     public ResponseEntity<ApiResponseDTO<String>> consultarStatus(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(dto -> {
-                    String status = dto.envio() != null
-                            ? dto.envio().status().name()
-                            : "DESCONHECIDO";
-                    return ResponseEntity.ok(ApiResponseDTO.success(status));
-                })
+        return service.buscarStatusPorId(id)
+                .map(status -> ResponseEntity.ok(ApiResponseDTO.success(status)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
