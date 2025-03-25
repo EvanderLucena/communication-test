@@ -13,7 +13,7 @@ public class ContatoValidator implements ConstraintValidator<ContatoValido, Dest
 
     @Override
     public boolean isValid(DestinatarioDTO dto, ConstraintValidatorContext context) {
-        if (dto == null || dto.contato() == null || dto.tipo() == null) return true; // outros @NotNull já validam
+        if (dto == null || dto.contato() == null || dto.tipo() == null) return true;
 
         return switch (dto.tipo()) {
             case EMAIL -> EMAIL_PATTERN.matcher(dto.contato()).matches();

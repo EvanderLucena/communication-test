@@ -56,15 +56,17 @@ public class AgendamentoService {
     }
 
 
-    public Optional<AgendamentoResponseDTO> buscarPorId(Long id) {
+    public Optional<AgendamentoResponseDTO> buscarPorId(final Long id) {
         return repository.findById(id)
                 .map(mapper::toDTO);
     }
 
-    public boolean deletar(Long id) {
+    public boolean deletar(final Long id) {
         return repository.findById(id)
                 .map(agendamento -> {
-                    if (agendamento.getEnvio() != null && agendamento.getEnvio().getStatus() == StatusComunicacaoEnum.ENVIADO) {
+                    if (agendamento.getEnvio() != null &&
+                            agendamento.getEnvio().getStatus() ==
+                            StatusComunicacaoEnum.ENVIADO) {
                         throw new BusinessException("Não é permitido excluir agendamentos que já foram enviados.");
                     }
                     repository.delete(agendamento);
@@ -73,7 +75,7 @@ public class AgendamentoService {
                 .orElse(false);
     }
 
-    public List<AgendamentoResponseDTO> listar(StatusComunicacaoEnum status) {
+    public List<AgendamentoResponseDTO> listar(final StatusComunicacaoEnum status) {
         List<Agendamento> agendamentos = (status != null)
                 ? repository.findByEnvio_Status(status)
                 : repository.findAll();
@@ -83,7 +85,7 @@ public class AgendamentoService {
                 .toList();
     }
 
-    public Optional<String> buscarStatusPorId(Long id) {
+    public Optional<String> buscarStatusPorId(final Long id) {
         return repository.findById(id)
                 .map(agendamento -> {
                     if (agendamento.getEnvio() == null || agendamento.getEnvio().getStatus() == null) {

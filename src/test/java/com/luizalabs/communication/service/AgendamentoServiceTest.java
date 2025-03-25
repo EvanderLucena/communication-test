@@ -165,7 +165,6 @@ class AgendamentoServiceTest {
         assertEquals(1L, response.id());
         assertEquals(StatusComunicacaoEnum.PENDENTE, response.envio().status());
 
-        // Verifica que o método save foi chamado exatamente uma vez
         verify(repository).save(any(Agendamento.class));
     }
 }

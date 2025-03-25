@@ -50,7 +50,8 @@ public class AgendamentoController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<AgendamentoResponseDTO>>> listar(@RequestParam(required = false) StatusComunicacaoEnum status) {
+    public ResponseEntity<ApiResponseDTO<List<AgendamentoResponseDTO>>> listar(@RequestParam(required = false)
+                                                                                   StatusComunicacaoEnum status) {
         return ResponseEntity.ok(ApiResponseDTO.success(service.listar(status)));
     }
 }

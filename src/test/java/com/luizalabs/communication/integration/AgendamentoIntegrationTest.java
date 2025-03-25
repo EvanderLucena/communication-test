@@ -52,7 +52,7 @@ class AgendamentoIntegrationTest {
         AgendamentoRequestDTO request = new AgendamentoRequestDTO(
                 LocalDateTime.now().plusHours(2),
                 new MensagemDTO("Teste de integração"),
-                new ArrayList<>( // 👈 Aqui
+                new ArrayList<>(
                         java.util.List.of(
                                 new DestinatarioDTO("teste@magalu.com", TipoComunicacaoEnum.EMAIL)
                         )

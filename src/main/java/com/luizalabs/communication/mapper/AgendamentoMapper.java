@@ -18,14 +18,12 @@ public class AgendamentoMapper {
                 .dataHoraEnvio(dto.dataHoraEnvio())
                 .build();
 
-        // Set mensagem
         Mensagem mensagem = Mensagem.builder()
                 .conteudo(dto.mensagem().conteudo())
                 .agendamento(agendamento)
                 .build();
         agendamento.setMensagem(mensagem);
 
-        // Set destinatarios
         List<Destinatario> destinatarios = dto.destinatarios().stream()
                 .map(d -> Destinatario.builder()
                         .contato(d.contato())
@@ -35,7 +33,6 @@ public class AgendamentoMapper {
                 .toList();
         agendamento.setDestinatarios(destinatarios);
 
-        // Set envio
         Envio envio = Envio.builder()
                 .status(StatusComunicacaoEnum.PENDENTE)
                 .agendamento(agendamento)
