@@ -88,14 +88,14 @@ class AgendamentoControllerTest {
     void deveConsultarStatusAgendamento() throws Exception {
         Long id = 1L;
 
-        when(service.buscarPorId(id)).thenReturn(Optional.of(agendamentoResponseDTO));
+        when(service.buscarStatusPorId(id)).thenReturn(Optional.of("PENDENTE"));
 
         mockMvc.perform(get("/agendamentos/{id}/status", id))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value("PENDENTE"));
 
-        verify(service).buscarPorId(id);
+        verify(service).buscarStatusPorId(id);
     }
 
     @Test
